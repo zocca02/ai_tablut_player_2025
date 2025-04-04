@@ -1,0 +1,52 @@
+apr 04, 2025 10:49:58 AM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Accensione server
+apr 04, 2025 10:49:58 AM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Partita di Tablut
+apr 04, 2025 10:49:58 AM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Waiting for white connection..
+apr 04, 2025 10:50:04 AM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: White player connected
+apr 04, 2025 10:50:04 AM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Lettura nome player bianco in corso..
+apr 04, 2025 10:50:05 AM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: White player name:	whitePlaye
+apr 04, 2025 10:50:05 AM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Waiting for Black connection..
+apr 04, 2025 10:50:05 AM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Accettata connessione con client giocatore Nero
+apr 04, 2025 10:50:05 AM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Lettura nome player nero in corso..
+apr 04, 2025 10:50:05 AM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Black player name:	blackPlayer
+apr 04, 2025 10:50:05 AM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Invio messaggio ai giocatori
+apr 04, 2025 10:50:05 AM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Lettura mossa player W in corso..
+apr 04, 2025 10:50:10 AM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Move received.	Turn: W Pawn from F5 to F3
+apr 04, 2025 10:50:10 AM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Invio messaggio ai client
+apr 04, 2025 10:50:10 AM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Lettura mossa player B in corso..
+apr 04, 2025 10:50:14 AM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Move received.	Turn: B Pawn from F1 to F2
+apr 04, 2025 10:50:14 AM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Invio messaggio ai client
+apr 04, 2025 10:50:14 AM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Lettura mossa player W in corso..
+apr 04, 2025 10:50:17 AM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Move received.	Turn: W Pawn from G5 to G6
+apr 04, 2025 10:50:18 AM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Invio messaggio ai client
+apr 04, 2025 10:50:18 AM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Lettura mossa player B in corso..
+apr 04, 2025 10:50:21 AM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Move received.	Turn: B Pawn from I4 to F4
+apr 04, 2025 10:50:21 AM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Invio messaggio ai client
+apr 04, 2025 10:50:21 AM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Lettura mossa player W in corso..
+apr 04, 2025 10:50:36 AM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Move received.	Turn: W Pawn from null to null
+apr 04, 2025 10:50:36 AM it.unibo.ai.didattica.competition.tablut.server.Server run
+WARNING: Chiusura sistema per troppi errori giocatore bianco

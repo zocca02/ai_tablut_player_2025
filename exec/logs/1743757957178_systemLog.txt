@@ -1,0 +1,14 @@
+apr 04, 2025 11:12:37 AM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Accensione server
+apr 04, 2025 11:12:37 AM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Partita di Tablut
+apr 04, 2025 11:12:37 AM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Waiting for white connection..
+apr 04, 2025 11:12:45 AM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: White player connected
+apr 04, 2025 11:12:45 AM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Lettura nome player bianco in corso..
+apr 04, 2025 11:12:46 AM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: White player name:	whitePlaye
+apr 04, 2025 11:12:46 AM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Waiting for Black connection..
