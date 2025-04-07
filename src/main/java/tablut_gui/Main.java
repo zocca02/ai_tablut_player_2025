@@ -8,7 +8,7 @@ public class Main {
 
 	public static void main(String[] args) {
 
-		int timeoutSec = 10;
+		int timeoutSec = 60;
 		String serverIp = "localhost";
 
 		HumanPlayer white = new HumanPlayer(Player.WHITE, "whitePlayer", timeoutSec, serverIp);
