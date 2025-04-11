@@ -1,14 +1,18 @@
-package tablut_gui.ai.first_try;
+package tablut_gui.ai;
 
 import aima.core.search.adversarial.Game;
+import lombok.AllArgsConstructor;
 import tablut_gui.model.Action;
 import tablut_gui.model.Player;
 import tablut_gui.model.State;
+import tablut_gui.model.StateTablut;
 
 import java.util.List;
 
-public class TablutTryGame implements Game<State, Action, Player> {
+@AllArgsConstructor
+public class TablutGame implements Game<State, Action, Player> {
 
+    private UtilityFunction utilityFn;
 
     @Override
     public State getInitialState() {
@@ -44,7 +48,7 @@ public class TablutTryGame implements Game<State, Action, Player> {
 
     @Override
     public double getUtility(State state, Player player) {
-        //TO DO
-        return 0;
+        return utilityFn.getUtility(state, player);
     }
+
 }

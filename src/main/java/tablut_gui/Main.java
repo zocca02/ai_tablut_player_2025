@@ -12,7 +12,7 @@ public class Main {
 		String serverIp = "localhost";
 
 		HumanPlayer white = new HumanPlayer(Player.WHITE, "whitePlayer", timeoutSec, serverIp);
-		RandomPlayer black = new RandomPlayer(Player.BLACK, "blackPlayer", timeoutSec, serverIp, false);
+		HumanPlayer black = new HumanPlayer(Player.BLACK, "blackPlayer", timeoutSec, serverIp);
 
 		white.start();
         try {
