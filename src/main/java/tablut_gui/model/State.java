@@ -16,6 +16,8 @@ public interface State {
 
     public Pawn getPawn(int row, int column);
     public Cell getCell(int row, int column);
+    public GameState getGameState();
+    public void setGameState(GameState g);
     public void removePawn(int row, int column);
 
 
@@ -28,5 +30,7 @@ public interface State {
     public List<Cell> legalMovesFor(int i, int j);
     public List<Action> getAllLegalMovesFor(Player player);
     public boolean isLegalTo(int iFrom, int jFrom, int iTo, int jTo);
+    public State applyMove(Action action);
 
+    public boolean equals(Object s);
 }

@@ -2,10 +2,7 @@ package tablut_gui.ai;
 
 import aima.core.search.adversarial.Game;
 import lombok.AllArgsConstructor;
-import tablut_gui.model.Action;
-import tablut_gui.model.Player;
-import tablut_gui.model.State;
-import tablut_gui.model.StateTablut;
+import tablut_gui.model.*;
 
 import java.util.List;
 
@@ -42,8 +39,7 @@ public class TablutGame implements Game<State, Action, Player> {
 
     @Override
     public boolean isTerminal(State state) {
-        //TO DO
-        return false;
+        return state.getGameState() != GameState.NOT_ENDED;
     }
 
     @Override

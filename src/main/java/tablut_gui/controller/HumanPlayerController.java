@@ -11,8 +11,11 @@ import java.io.IOException;
 
 public class HumanPlayerController extends GuiInPlayerController {
 
+    private State computedState;
+
     public HumanPlayerController(Client client, Gui gui) {
         super(client, gui);
+        computedState = StateTablut.startBoard();
         gui.setEnableInput(true);
     }
 
@@ -22,6 +25,15 @@ public class HumanPlayerController extends GuiInPlayerController {
         System.out.println(stateDTO);
 
         State newState = StateTablut.fromDTO(stateDTO);
+        if(newState.getTurn()==getClient().getPlayer()){
+            System.out.println("Griglia calcolate");
+            System.out.println(computedState);
+            System.out.println("Confronto stati: "+computedState.equals(newState));
+        }
+        else{
+            computedState = newState;
+        }
+
 
         getGui().ifPresent(g -> {
             g.setTurn(newState.getTurn());
@@ -33,7 +45,7 @@ public class HumanPlayerController extends GuiInPlayerController {
     @Override
     protected void onNewMoveSelected(Action move){
         System.out.println(move);
-
+        computedState = computedState.applyMove(move);
         try {
             super.getClient().sendAction(move);
         } catch (IOException | ClassNotFoundException e) {

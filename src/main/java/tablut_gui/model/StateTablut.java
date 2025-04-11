@@ -1,7 +1,6 @@
 package tablut_gui.model;
 
 
-import org.apache.commons.math3.util.Pair;
 import tablut_gui.dto.StateDTO;
 import tablut_gui.exceptions.SelectionException;
 
@@ -70,8 +69,8 @@ public class StateTablut extends AbstractState implements Serializable {
 
         st.setTurn(stateDTO.getTurn());
 
-        for(var raw : st.getBoard()){
-            for(var cell : raw){
+        for(var row : st.getBoard()){
+            for(var cell : row){
                 cell.setPawn(stateDTO.getBoard()[cell.getI()][cell.getJ()]);
             }
         }
@@ -133,6 +132,7 @@ public class StateTablut extends AbstractState implements Serializable {
         if (this.getClass() != obj.getClass())
             return false;
         StateTablut other = (StateTablut) obj;
+        System.out.println("b");
         if (this.board == null) {
             if (other.board != null)
                 return false;
@@ -143,10 +143,12 @@ public class StateTablut extends AbstractState implements Serializable {
                 return false;
             if (this.board[0].length != other.board[0].length)
                 return false;
+            System.out.println("a");
             for (int i = 0; i < other.board.length; i++)
                 for (int j = 0; j < other.board[i].length; j++)
                     if (!this.board[i][j].equals(other.board[i][j]))
                         return false;
+            System.out.println("c");
         }
         if (this.turn != other.turn)
             return false;
@@ -188,15 +190,156 @@ public class StateTablut extends AbstractState implements Serializable {
         return legalMovesFor(iFrom, jFrom).stream().anyMatch(c -> c.getI() == iTo && c.getJ() == jTo);
     }
 
+    @Override
+    public State applyMove(Action action) {
+        int iFrom = action.getRowFrom();
+        int jFrom = action.getColumnFrom();
+        int iTo = action.getRowTo();
+        int jTo = action.getColumnTo();
+
+        StateTablut newState = this.clone();
+        Pawn p = newState.getBoard()[iFrom][jFrom].getPawn();
+        newState.getBoard()[iFrom][jFrom].setPawn(Pawn.EMPTY);
+        newState.getBoard()[iTo][jTo].setPawn(p);
+
+        if(newState.getTurn()==Player.WHITE)
+            updateWhiteMove(iFrom, jFrom, iTo, jTo, p, newState);
+        else
+            updateBlackMove(iFrom, jFrom, iTo, jTo, p, newState);
+
+        newState.setTurn(newState.getTurn().getOpponent());
+        return newState;
+    }
+
+
+
+    private void updateWhiteMove(int iFrom, int jFrom, int iTo, int jTo, Pawn p, StateTablut newState){
+
+        //capture
+        checkCaptureFor(iTo, jTo, newState, Player.BLACK);
+
+        //white win
+        if(p==Pawn.KING){
+            if(Arrays.stream(exitCells).anyMatch(c -> c[0]==iTo && c[1]==jTo))
+                newState.setGameState(GameState.WHITE_WIN);
+        }
+    }
+
+
+    private void updateBlackMove(int iFrom, int jFrom, int iTo, int jTo, Pawn p, StateTablut newState){
+
+        //capture
+        checkCaptureFor(iTo, jTo, newState, Player.BLACK);
+
+        //black win
+        Cell kingCell = newState.getKingCell();
+        int iK = kingCell.getI();
+        int jK = kingCell.getJ();
+        boolean win=false;
+        List<Cell> kingNeighbors = newState.getNeighbors(kingCell);
+        if(kingNeighbors.stream().anyMatch(c -> c.getI()==iTo && c.getJ()==jTo)){
+            if(kingCell.getType() == CellType.THRONE){
+                win = newState.getPawn(3, 4)==Pawn.BLACK
+                        && newState.getPawn(5, 4)==Pawn.BLACK
+                        && newState.getPawn(4, 3)==Pawn.BLACK
+                        && newState.getPawn(4, 5)==Pawn.BLACK;
+            }
+            else if(kingNeighbors.stream().anyMatch(c -> c.getType()==CellType.THRONE)){
+                win=true;
+                for(var n : kingNeighbors){
+                    win = win && (n.getType()==CellType.THRONE || n.getPawn().belongsTo(Player.BLACK));
+                }
+            }
+            else{
+                win = ((newState.getPawn(iK-1, jK).belongsTo(Player.BLACK) || newState.getBoard()[iK-1][jK].getType()==CellType.BLACK_BASE)
+                        && (newState.getPawn(iK+1, jK).belongsTo(Player.BLACK) || newState.getBoard()[iK+1][jK].getType()==CellType.BLACK_BASE))
+                        ||
+                        ((newState.getPawn(iK-1, jK).belongsTo(Player.BLACK) || newState.getBoard()[iK][jK-1].getType()==CellType.BLACK_BASE)
+                                && (newState.getPawn(iK+1, jK).belongsTo(Player.BLACK) || newState.getBoard()[iK][jK+1].getType()==CellType.BLACK_BASE));
+            }
+
+            if(win)
+                newState.setGameState(GameState.BLACK_WIN);
+
+        }
+    }
+
+    private void checkCaptureFor(int iTo, int jTo, StateTablut newState, Player player){
+        List<Cell> pawnNeighbors = newState.getNeighbors(iTo, jTo);
+        for(var c : pawnNeighbors){
+            if(c.getPawn()!=Pawn.KING && c.getPawn().belongsTo(player.getOpponent())){
+                int di = c.getI()-iTo;
+                int dj = c.getJ()-jTo;
+
+                if(di!=0 && iTo+2*di>=0 && iTo+2*di<=8){
+                    Cell other = newState.getBoard()[iTo+2*di][jTo];
+                    if(other.getPawn().belongsTo(player) || other.getType() == CellType.THRONE
+                            || (other.getType() == CellType.BLACK_BASE && c.getType()!=CellType.BLACK_BASE)){
+                        c.setPawn(Pawn.EMPTY);
+                        continue;
+                    }
+
+                }
+
+                if(dj!=0 && jTo+2*dj>=0 && jTo+2*dj<=8){
+                    Cell other = newState.getBoard()[iTo][jTo+2*dj];
+                    if(other.getPawn().belongsTo(player) || other.getType() == CellType.THRONE
+                            || (other.getType() == CellType.BLACK_BASE && c.getType()!=CellType.BLACK_BASE)){
+                        c.setPawn(Pawn.EMPTY);
+                        continue;
+                    }
+                }
+
+            }
+        }
+    }
+
+    public List<Cell> getNeighbors(Cell c){
+        int i = c.getI();
+        int j = c.getJ();
+        var l = new ArrayList<Cell>();
+        if(i+1<=8)
+            l.add(board[i+1][j]);
+        if(j+1<=8)
+            l.add(board[i][j+1]);
+        if(i-1>=0)
+            l.add(board[i-1][j]);
+        if(j-1>=0)
+            l.add(board[i][j-1]);
+        return l;
+    }
+
+    public List<Cell> getNeighbors(int i, int j){
+        var l = new ArrayList<Cell>();
+        if(i+1<=8)
+            l.add(board[i+1][j]);
+        if(j+1<=8)
+            l.add(board[i][j+1]);
+        if(i-1>=0)
+            l.add(board[i-1][j]);
+        if(j-1>=0)
+            l.add(board[i][j-1]);
+        return l;
+    }
+
+    public Cell getKingCell(){
+        for(var row : board){
+            for(var c : row){
+                if(c.getPawn()==Pawn.KING) return c;
+            }
+        }
+        return null;
+    }
+
     private boolean canEnterInBlackBase(int i, int j){
         return board[i][j].getPawn() == Pawn.BLACK && board[i][j].getType() == CellType.BLACK_BASE;
     }
 
     public List<Action> getAllLegalMovesFor(Player player){
         List<Action> legalMoves = new ArrayList<>();
-        for(var raw : board){
-            for(var fromCell : raw){
-                if(fromCell.getPawn().ownsTo(player)){
+        for(var row : board){
+            for(var fromCell : row){
+                if(fromCell.getPawn().belongsTo(player)){
                     for(var toCell : legalMovesFor(fromCell.getI(), fromCell.getJ())){
                         legalMoves.add(new Action(fromCell.getI(), fromCell.getJ(), toCell.getI(), toCell.getJ(), player));
                     }
@@ -207,6 +350,20 @@ public class StateTablut extends AbstractState implements Serializable {
 
         return legalMoves;
     }
+
+    @Override
+    public String toString(){
+        String s = "";
+        for(var row : board){
+            for(var c : row){
+                s += c.getPawn().toString() + " ";
+            }
+            s+="\n";
+        }
+
+        return s;
+    }
+
 
 }
 

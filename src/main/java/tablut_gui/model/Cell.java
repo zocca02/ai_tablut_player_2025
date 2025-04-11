@@ -25,4 +25,12 @@ public class Cell {
 		return hasPawn() || type==CellType.THRONE;
 	}
 
+
+	@Override
+	public boolean equals(Object o){
+		if(o==null) return false;
+		if(!(o instanceof Cell c)) return false;
+		return i==c.getI() && j==c.getJ() && pawn == c.getPawn() && type == c.getType();
+	}
+
 }

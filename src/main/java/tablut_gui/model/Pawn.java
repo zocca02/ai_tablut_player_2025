@@ -37,7 +37,7 @@ public enum Pawn {
 		return this==WHITE || this == BLACK || this == KING;
 	}
 
-	public boolean ownsTo(Player player){
+	public boolean belongsTo(Player player){
 		if(player == Player.WHITE)
 			return this==WHITE || this==KING;
 		else if(player == Player.BLACK)

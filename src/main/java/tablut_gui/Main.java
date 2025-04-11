@@ -12,14 +12,14 @@ public class Main {
 		String serverIp = "localhost";
 
 		HumanPlayer white = new HumanPlayer(Player.WHITE, "whitePlayer", timeoutSec, serverIp);
-		HumanPlayer black = new HumanPlayer(Player.BLACK, "blackPlayer", timeoutSec, serverIp);
+		//HumanPlayer black = new HumanPlayer(Player.BLACK, "blackPlayer", timeoutSec, serverIp);
 
 		white.start();
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {}
 
-		black.start();
+		//black.start();
 
 
 

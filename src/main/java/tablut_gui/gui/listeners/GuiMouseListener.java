@@ -55,7 +55,7 @@ public class GuiMouseListener implements MouseListener {
 
         if(i<=8 && j<=8) {
             Pawn p = gui.getBackground().getState().getPawn(i, j);
-            if(p.ownsTo(gui.getPlayer())){
+            if(p.belongsTo(gui.getPlayer())){
                 gui.getBackground().setSelectedI(i);
                 gui.getBackground().setSelectedJ(j);
             }
