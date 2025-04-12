@@ -32,8 +32,6 @@ public class RandomAI implements AIAlgorithm {
             //System.out.println("ccc");
         }
 
-
-
         var legalMoves = currentState.getAllLegalMovesFor(player);
         var move = legalMoves.get(rand.nextInt(legalMoves.size()));
         return move;

@@ -1,6 +1,8 @@
 package tablut_gui.controller;
 
 
+import lombok.Getter;
+import lombok.Setter;
 import tablut_gui.client.Client;
 import tablut_gui.dto.StateDTO;
 import tablut_gui.gui.Gui;
@@ -14,15 +16,18 @@ public abstract class LocalPlayerController {
 	private Client client;
 	private Optional<Gui> gui;
 	private boolean useGui;
+	@Getter @Setter
+	private boolean enableLog;
 
 
-
-	public LocalPlayerController(Client client, Gui gui) {
+	public LocalPlayerController(Client client, Gui gui, boolean enableLog) {
 
 		this.client = client;
 		this.client.setOnStateReceivedHandler(this::onStateReceived);
 		this.client.setOnMoveTimeoutExpiredHandler(this::onMoveTimeoutExpired);
 		this.client.setOnGameOverHandler(this::onGameOver);
+
+		this.enableLog = enableLog;
 
 		if(gui!=null){
 			gui.setEnableInput(false);
@@ -36,7 +41,7 @@ public abstract class LocalPlayerController {
 	}
 
 	public LocalPlayerController(Client client) {
-		this(client, null);
+		this(client, null, false);
 	}
 
 	protected Optional<Gui> getGui(){

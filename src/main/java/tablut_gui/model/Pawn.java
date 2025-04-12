@@ -45,4 +45,8 @@ public enum Pawn {
 		else
 			return false;
 	}
+    public Player getOwner(){
+        if(this==WHITE || this==THRONE) return Player.WHITE;
+        else return Player.BLACK;
+    }
 }

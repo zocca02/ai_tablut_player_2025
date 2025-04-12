@@ -1,6 +1,7 @@
 package tablut_gui.model;
 
 
+import org.apache.commons.math3.util.Pair;
 import tablut_gui.dto.StateDTO;
 import tablut_gui.exceptions.SelectionException;
 
@@ -44,6 +45,10 @@ public class StateTablut extends AbstractState implements Serializable {
             {3, 8}, {4, 8}, {5, 8}, {4, 7}
     };
 
+    //////////////////////
+    // FACTORY METHODS
+    //////////////////////
+
     public static StateTablut empty(){
         return new StateTablut();
     }
@@ -69,15 +74,20 @@ public class StateTablut extends AbstractState implements Serializable {
 
         st.setTurn(stateDTO.getTurn());
 
-        for(var row : st.getBoard()){
-            for(var cell : row){
+        for(var raw : st.getBoard()){
+            for(var cell : raw){
                 cell.setPawn(stateDTO.getBoard()[cell.getI()][cell.getJ()]);
             }
         }
 
+        if(st.getBoard()[4][4].getPawn() == Pawn.THRONE) st.getBoard()[4][4].setPawn(Pawn.EMPTY);
+
         return st;
     }
 
+    //////////////////////
+    // CONS AND UTILITY
+    //////////////////////
 
     private StateTablut() {
         super();
@@ -113,15 +123,15 @@ public class StateTablut extends AbstractState implements Serializable {
 
         for (int i = 0; i < this.board.length; i++) {
             for (int j = 0; j < this.board[i].length; j++) {
-                newboard[i][j] = oldboard[i][j];
+                newboard[i][j] = oldboard[i][j].clone();
             }
         }
 
+        result.setGameState(getGameState());
         result.setBoard(newboard);
         result.setTurn(this.turn);
         return result;
     }
-
 
     @Override
     public boolean equals(Object obj) {
@@ -132,7 +142,6 @@ public class StateTablut extends AbstractState implements Serializable {
         if (this.getClass() != obj.getClass())
             return false;
         StateTablut other = (StateTablut) obj;
-        System.out.println("b");
         if (this.board == null) {
             if (other.board != null)
                 return false;
@@ -143,19 +152,70 @@ public class StateTablut extends AbstractState implements Serializable {
                 return false;
             if (this.board[0].length != other.board[0].length)
                 return false;
-            System.out.println("a");
             for (int i = 0; i < other.board.length; i++)
                 for (int j = 0; j < other.board[i].length; j++)
                     if (!this.board[i][j].equals(other.board[i][j]))
                         return false;
-            System.out.println("c");
         }
         if (this.turn != other.turn)
             return false;
         return true;
     }
 
+    @Override
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("Turn ").append(turn).append("\n");
+        for(var row : board){
+            for(var c : row){
+                sb.append(c.getPawn()).append(" ");
+            }
+            sb.append("\n");
+        }
 
+        return sb.toString();
+    }
+
+    public List<Cell> getNeighbors(Cell c){
+        int i = c.getI();
+        int j = c.getJ();
+        var l = new ArrayList<Cell>();
+        if(i+1<=8)
+            l.add(board[i+1][j]);
+        if(j+1<=8)
+            l.add(board[i][j+1]);
+        if(i-1>=0)
+            l.add(board[i-1][j]);
+        if(j-1>=0)
+            l.add(board[i][j-1]);
+        return l;
+    }
+
+    public List<Cell> getNeighbors(int i, int j){
+        var l = new ArrayList<Cell>();
+        if(i+1<=8)
+            l.add(board[i+1][j]);
+        if(j+1<=8)
+            l.add(board[i][j+1]);
+        if(i-1>=0)
+            l.add(board[i-1][j]);
+        if(j-1>=0)
+            l.add(board[i][j-1]);
+        return l;
+    }
+
+    public Cell getKingCell(){
+        for(var row : board){
+            for(var c : row){
+                if(c.getPawn()==Pawn.KING) return c;
+            }
+        }
+        return null;
+    }
+
+    //////////////////////
+    // LEGAL MOVES
+    //////////////////////
 
     public List<Cell> legalMovesFor(int i, int j){
         if(!board[i][j].hasPawn()) throw new SelectionException("No pawn in cell "+i+", "+j);
@@ -190,6 +250,30 @@ public class StateTablut extends AbstractState implements Serializable {
         return legalMovesFor(iFrom, jFrom).stream().anyMatch(c -> c.getI() == iTo && c.getJ() == jTo);
     }
 
+    private boolean canEnterInBlackBase(int i, int j){
+        return board[i][j].getPawn() == Pawn.BLACK && board[i][j].getType() == CellType.BLACK_BASE;
+    }
+
+    public List<Action> getAllLegalMovesFor(Player player){
+        List<Action> legalMoves = new ArrayList<>();
+        for(var row : board){
+            for(var fromCell : row){
+                if(fromCell.getPawn().belongsTo(player)){
+                    for(var toCell : legalMovesFor(fromCell.getI(), fromCell.getJ())){
+                        legalMoves.add(new Action(fromCell.getI(), fromCell.getJ(), toCell.getI(), toCell.getJ(), player));
+                    }
+                }
+
+            }
+        }
+
+        return legalMoves;
+    }
+
+    //////////////////////
+    // APPLY MOVE
+    //////////////////////
+
     @Override
     public State applyMove(Action action) {
         int iFrom = action.getRowFrom();
@@ -211,12 +295,10 @@ public class StateTablut extends AbstractState implements Serializable {
         return newState;
     }
 
-
-
     private void updateWhiteMove(int iFrom, int jFrom, int iTo, int jTo, Pawn p, StateTablut newState){
 
         //capture
-        checkCaptureFor(iTo, jTo, newState, Player.BLACK);
+        checkCaptureFor(iTo, jTo, newState, Player.WHITE);
 
         //white win
         if(p==Pawn.KING){
@@ -224,7 +306,6 @@ public class StateTablut extends AbstractState implements Serializable {
                 newState.setGameState(GameState.WHITE_WIN);
         }
     }
-
 
     private void updateBlackMove(int iFrom, int jFrom, int iTo, int jTo, Pawn p, StateTablut newState){
 
@@ -294,75 +375,31 @@ public class StateTablut extends AbstractState implements Serializable {
         }
     }
 
-    public List<Cell> getNeighbors(Cell c){
-        int i = c.getI();
-        int j = c.getJ();
-        var l = new ArrayList<Cell>();
-        if(i+1<=8)
-            l.add(board[i+1][j]);
-        if(j+1<=8)
-            l.add(board[i][j+1]);
-        if(i-1>=0)
-            l.add(board[i-1][j]);
-        if(j-1>=0)
-            l.add(board[i][j-1]);
-        return l;
-    }
+    //////////////////////
+    // STATS
+    //////////////////////
 
-    public List<Cell> getNeighbors(int i, int j){
-        var l = new ArrayList<Cell>();
-        if(i+1<=8)
-            l.add(board[i+1][j]);
-        if(j+1<=8)
-            l.add(board[i][j+1]);
-        if(i-1>=0)
-            l.add(board[i-1][j]);
-        if(j-1>=0)
-            l.add(board[i][j-1]);
-        return l;
-    }
-
-    public Cell getKingCell(){
+    public int getPawnNumber(Player player){
+        int num = 0;
         for(var row : board){
             for(var c : row){
-                if(c.getPawn()==Pawn.KING) return c;
-            }
-        }
-        return null;
-    }
-
-    private boolean canEnterInBlackBase(int i, int j){
-        return board[i][j].getPawn() == Pawn.BLACK && board[i][j].getType() == CellType.BLACK_BASE;
-    }
-
-    public List<Action> getAllLegalMovesFor(Player player){
-        List<Action> legalMoves = new ArrayList<>();
-        for(var row : board){
-            for(var fromCell : row){
-                if(fromCell.getPawn().belongsTo(player)){
-                    for(var toCell : legalMovesFor(fromCell.getI(), fromCell.getJ())){
-                        legalMoves.add(new Action(fromCell.getI(), fromCell.getJ(), toCell.getI(), toCell.getJ(), player));
-                    }
-                }
-
+                if(c.getPawn()!=Pawn.KING && c.getPawn().belongsTo(player))
+                    num++;
             }
         }
 
-        return legalMoves;
+        return num;
     }
 
-    @Override
-    public String toString(){
-        String s = "";
-        for(var row : board){
-            for(var c : row){
-                s += c.getPawn().toString() + " ";
-            }
-            s+="\n";
-        }
-
-        return s;
+    public int getKingImmediateExit(){
+        Cell king = getKingCell();
+        return (int)legalMovesFor(king.getI(), king.getJ()).stream()
+                .filter(c -> c.getI()==0 || c.getI()==8 || c.getJ()==0 || c.getJ()==8)
+                .count();
     }
+
+
+
 
 
 }

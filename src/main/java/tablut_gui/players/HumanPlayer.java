@@ -16,13 +16,14 @@ public class HumanPlayer extends Thread{
     private String name;
     private int timeoutSec;
     private String serverIp;
+    private boolean enableLog;
 
 
     @Override
     public void run(){
         Client client = new Client(player, name, timeoutSec, serverIp);
         Gui gui = new Gui(GameType.TABLUT, player, StateTablut.empty());
-        LocalPlayerController controller = new HumanPlayerController(client, gui);
+        LocalPlayerController controller = new HumanPlayerController(client, gui, enableLog);
 
     }
 }

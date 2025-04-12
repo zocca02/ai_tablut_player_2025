@@ -25,6 +25,9 @@ public class Cell {
 		return hasPawn() || type==CellType.THRONE;
 	}
 
+	public Cell clone(){
+		return new Cell(type, pawn, i, j);
+	}
 
 	@Override
 	public boolean equals(Object o){

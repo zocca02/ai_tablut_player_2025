@@ -13,8 +13,8 @@ public class HumanPlayerController extends GuiInPlayerController {
 
     private State computedState;
 
-    public HumanPlayerController(Client client, Gui gui) {
-        super(client, gui);
+    public HumanPlayerController(Client client, Gui gui, boolean enableLog) {
+        super(client, gui, enableLog);
         computedState = StateTablut.startBoard();
         gui.setEnableInput(true);
     }
@@ -22,17 +22,22 @@ public class HumanPlayerController extends GuiInPlayerController {
 
     @Override
     protected void onStateReceived(StateDTO stateDTO){
-        System.out.println(stateDTO);
+
 
         State newState = StateTablut.fromDTO(stateDTO);
-        if(newState.getTurn()==getClient().getPlayer()){
-            System.out.println("Griglia calcolate");
-            System.out.println(computedState);
-            System.out.println("Confronto stati: "+computedState.equals(newState));
+        if(newState.getTurn()!=getClient().getPlayer()){
+            if(isEnableLog()){
+                System.out.println("Confronto stati: "+computedState.equals(newState));
+                if(!computedState.equals(newState)){
+                    System.out.println("Griglia ricevuta!!!!!!!!");
+                    System.out.println(stateDTO);
+                    System.out.println("Griglia calcolata!!!!!!!!");
+                    System.out.println(computedState);
+                }
+            }
+
         }
-        else{
-            computedState = newState;
-        }
+        computedState = newState;
 
 
         getGui().ifPresent(g -> {
@@ -44,7 +49,7 @@ public class HumanPlayerController extends GuiInPlayerController {
 
     @Override
     protected void onNewMoveSelected(Action move){
-        System.out.println(move);
+
         computedState = computedState.applyMove(move);
         try {
             super.getClient().sendAction(move);
@@ -55,12 +60,14 @@ public class HumanPlayerController extends GuiInPlayerController {
 
     @Override
     protected void onMoveTimeoutExpired(){
-        System.out.println("Player "+super.getClient().getPlayer()+": Timeout expired, you lost");
+        if(isEnableLog())
+            System.out.println("Player "+super.getClient().getPlayer()+": Timeout expired, you lost");
     }
 
     @Override
     protected void onGameOver(){
-        System.out.println("Player "+super.getClient().getPlayer()+": Game over");
+        if(isEnableLog())
+            System.out.println("Player "+super.getClient().getPlayer()+": Game over");
         Thread.currentThread().interrupt();
     }
 }

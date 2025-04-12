@@ -30,7 +30,13 @@ public interface State {
     public List<Cell> legalMovesFor(int i, int j);
     public List<Action> getAllLegalMovesFor(Player player);
     public boolean isLegalTo(int iFrom, int jFrom, int iTo, int jTo);
-    public State applyMove(Action action);
 
+    public State applyMove(Action action);
     public boolean equals(Object s);
+
+    public int getPawnNumber(Player player);
+    public int getKingImmediateExit();
+    public Cell getKingCell();
+    public List<Cell> getNeighbors(Cell c);
+    public List<Cell> getNeighbors(int i, int j);
 }

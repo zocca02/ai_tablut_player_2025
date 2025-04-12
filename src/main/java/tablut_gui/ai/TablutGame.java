@@ -33,8 +33,7 @@ public class TablutGame implements Game<State, Action, Player> {
 
     @Override
     public State getResult(State state, Action action) {
-        //TO DO
-        return null;
+        return state.applyMove(action);
     }
 
     @Override

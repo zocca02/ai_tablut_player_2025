@@ -6,8 +6,8 @@ import tablut_gui.model.Action;
 
 public abstract class GuiInPlayerController extends LocalPlayerController {
 
-    public GuiInPlayerController(Client client, Gui gui) {
-        super(client, gui);
+    public GuiInPlayerController(Client client, Gui gui, boolean enableLog) {
+        super(client, gui, enableLog);
 
         if(gui==null) throw new IllegalArgumentException("Gui can't be null");
         gui.setOnNewMoveHandler(this::onNewMoveSelected);

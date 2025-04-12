@@ -11,7 +11,7 @@ public class ActionException extends Exception {
 
 	private static final long serialVersionUID = 1L;
 	
-	public ActionException(tablut_gui.model.Action a)
+	public ActionException(Action a)
 	{
 		super("The format of the action is not correct: "+a.toString());
 	}

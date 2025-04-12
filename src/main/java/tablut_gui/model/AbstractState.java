@@ -24,7 +24,7 @@ public abstract class AbstractState implements State {
 	protected int[][] blackCells;
 
 	public AbstractState() {
-		super();
+		gameState = GameState.NOT_ENDED;
 	}
 
 	public String boardString() {
@@ -109,6 +109,8 @@ public abstract class AbstractState implements State {
 		return true;
 	}
 
+	public abstract State clone();
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -136,31 +138,6 @@ public abstract class AbstractState implements State {
 
 
 
-	public AbstractState clone() {
-		Class<? extends AbstractState> stateclass = this.getClass();
-		Constructor<? extends AbstractState> cons = null;
-		AbstractState result = null;
-		try {
-			cons = stateclass.getConstructor(stateclass);
-			result = cons.newInstance(new Object[0]);
-		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
-				| IllegalArgumentException | InvocationTargetException e) {
-			e.printStackTrace();
-		}
-
-		Cell[][] oldBoard = this.getBoard();
-		Cell[][] newBoard = result.getBoard();
-
-		for (int i = 0; i < this.board.length; i++) {
-			for (int j = 0; j < this.board[i].length; j++) {
-				newBoard[i][j] = oldBoard[i][j];
-			}
-		}
-
-		result.setBoard(newBoard);
-		result.setTurn(this.turn);
-		return result;
-	}
 
 	public int getNumberOf(Pawn color) {
 		int count = 0;

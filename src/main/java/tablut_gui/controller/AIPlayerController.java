@@ -14,8 +14,8 @@ public class AIPlayerController extends LocalPlayerController {
 
     private AIAlgorithm ai;
 
-    public AIPlayerController(Client client, Gui gui, AIAlgorithm ai) {
-        super(client, gui);
+    public AIPlayerController(Client client, Gui gui, AIAlgorithm ai, boolean enableLog) {
+        super(client, gui, enableLog);
         this.ai = ai;
     }
 
@@ -52,7 +52,8 @@ public class AIPlayerController extends LocalPlayerController {
 
     @Override
     protected void onGameOver(){
-        System.out.println("Player "+super.getClient().getPlayer()+": Game over");
+        if(isEnableLog())
+            System.out.println("Player "+super.getClient().getPlayer()+": Game over");
         Thread.currentThread().interrupt();
     }
 }
